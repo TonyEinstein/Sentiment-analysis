@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/static/favicon.ico"/>
+    <title>echarts</title>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/jquery-3.4.1.min.js"></script>
+    <script src="/static/js/echarts-wordcloud.js"></script>
+    <script src="/static/js/echarts-wordcloud.min.js"></script>
+    <title>将页面平均分成四部分</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .main{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+        .quarter-div{
+            width: 50%;
+            height: 50%;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="quarter-div" id="UpperLeft"></div>
+        <!--柱形-->
+        <script type="text/javascript">
+        $(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('UpperLeft'));
+            $.ajax({
+                'url':'/getData1',
+                'success':function (data) {
+                    json_data = JSON.parse(data);
+                    console.info(json_data['key']);
+                    console.info(json_data['value']);
+                    // 指定图表的配置项和数据
+            var option = {
+                // backgroundColor:'red',
+                title: {
+                    text: '情感倾向详情'
+                },
+                tooltip: {},
+                legend: {
+                    data:['分类评论数']
+                },
+                xAxis: {
+                    data: json_data['key']
+                },
+                yAxis: {},
+                series: [{
+                    name: '分类评论数',
+                    type: 'bar',
+                    data: json_data['value']
+                }]
+            };
+
+        // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+                }
+            })
+        });
+    </script>
+
+        <div class="quarter-div" id="UpperRight"></div>
+        <!--饼图-->
+        <script type="text/javascript">
+        $(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('UpperRight'));
+            $.ajax({
+                'url':'/getData2',
+                'success':function (data) {
+                    json_data = JSON.parse(data);
+                    console.info(json_data['key']);
+                    console.info(json_data['value']);
+                    // 指定图表的配置项和数据
+            var option = {
+
+                backgroundColor: '#ffffff',
+                title: {
+                    text: '分类比例',
+                    left: 'center',
+                    top: 20,
+                    textStyle: {
+                        color: '#0a070f'
+                    }
+                },
+
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                visualMap: {
+                    show: false,
+                    min: 80,
+                    max: 600,
+                    inRange: {
+                        colorLightness: [0, 1]
+                    }
+                },
+                series : [
+                    {
+                        name:'评论占比',
+                        type:'pie',
+                        radius : '55%',
+                        center: ['50%', '50%'],
+                        data:[
+                            {value:json_data['value'][0], name:json_data['key'][0]},
+                            {value:json_data['value'][1], name:json_data['key'][1]},
+                            {value:json_data['value'][2], name:json_data['key'][2]},
+                        ].sort(function (a, b) { return a.value - b.value; }),
+                        roseType: 'radius',
+                        label: {
+                            normal: {
+                                textStyle: {
+                                    color: 'rgba(10,7,15,1)'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                lineStyle: {
+                                    color: 'rgba(10, 255, 255, 8)'
+                                },
+                                smooth: 0.2,
+                                length: 10,
+                                length2: 20
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#c23531',
+                                shadowBlur: 200,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return Math.random() * 200;
+                        }
+                    }
+                ]
+            };
+
+        // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+                }
+            })
+        });
+    </script>
+
+        <div class="quarter-div" id="LowerLeft"></div>
+        <!--长方-->
+        <script type="text/javascript">
+        $(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('LowerLeft'));
+            $.ajax({
+                'url':'/getData3',
+                'success':function (data) {
+                    json_data = JSON.parse(data);
+                    console.info(json_data['key']);
+                    console.info(json_data['value']);
+                    // 指定图表的配置项和数据
+            var option = {
+                color: ['#3398DB'],
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer : {// 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : json_data['key'],
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'词语个数',
+                        type:'bar',
+                        barWidth: '60%',
+                        data:json_data['value']
+                    }
+                ]
+            };
+
+        // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+                }
+            })
+        });
+    </script>
+
+        <div class="quarter-div" id="LowerRight"></div>
+        <!--词云-->
+        <script type="text/javascript">
+        $(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('LowerRight'));
+            $.ajax({
+                'url':'/getData4',
+                'success':function (data) {
+                    json_data = JSON.parse(data);
+                    console.info(json_data['key']);
+                    console.info(json_data['value']);
+                    // 指定图表的配置项和数据
+
+            function putdict() {
+                var dict = [];
+                for (var i=0;i<=json_data['key'].length;i++){
+                    dict.push({
+                        name:json_data['key'][i],
+                        value:json_data['value'][i]
+                    })
+                }
+                return dict
+            }
+            var maskImage = new Image();
+            var option = {
+                tooltip: {},
+                series: [ {
+                    type: 'wordCloud',
+                    gridSize: 2,
+                    sizeRange: [12, 50],
+                    rotationRange: [-90, 90],
+                    shape: 'pentagon',
+                    width: 600,
+                    height: 400,
+                    textStyle: {
+                        normal: {
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: putdict()
+
+                } ]
+            };
+
+        // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+                }
+            })
+        });
+    </script>
+    </div>
+</body>
+</html>
