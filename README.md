@@ -5,7 +5,7 @@
 <p align="center">
   <sub>
     Built with ❤︎ by
-    <a href="https://github.com/chenruhai">chenruhai</a>, 
+    <a href="https://github.com/TonyEinstein">TonyEinstein</a>, 
     <a href="https://github.com/jwcen">jwcen</a>,
     and the community!
   </sub>
